@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- partial:partials/_head.ejs -->
+<%- include('../../partials/_head.ejs') %>
+
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.ejs -->
+      <%- include('../../partials/_sidebar.ejs') %>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+          <!-- partial:partials/_navbar.ejs -->
+          <%- include('../../partials/_navbar.ejs') %>
+            <!-- partial -->
+            <div class="main-panel">
+              <div class="content-wrapper">
+                <div class="page-header">
+                  <h3 class="page-title"> Form elements </h3>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Form elements</li>
+                    </ol>
+                  </nav>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                         <!-- show the message -->
+                         <div id="responseMessage" style="margin-top: 15px;"></div>
+                        <h4 class="card-title">Deatails Add</h4>
+                        <p class="card-description"> Table</p>
+                        <form class="forms-sample" method="#" action="#" id="my-form">
+                            <div class="form-group row">
+                                <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Category</label>
+                                <div class="col-sm-9">
+                                  <select class="form-control" id="exampleInputUsername2" name="category">
+                                    <option value="">Select One</option>
+                                    <% data.allcategory.forEach(category => { %>
+                                      <option value="<%= category._id %>" id="category" <% if (category._id.toString() === data.subcategorys.category) { %> selected <% } %>>
+                                          <%= category.category %>
+                                      </option>
+                                  <% }); %>                                  
+                                  </select>
+                                  <span class="text-danger" id="catvalidation"> </span>
+                                </div>
+                              </div>
+
+                              <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Sub-Category</label>
+                                <div class="col-sm-9">
+                                  <input type="text" class="form-control" name="subcategory" placeholder="subcategory" autocomplete="off" value="<%=data.subcategorys.subcategory %>">
+                                    <span class="text-danger" id="subvalidation"> </span>
+                                </div>
+                              </div>     
+                          <input type="hidden" name="verify" value="true">  
+                          <input type="hidden" name="subId"  value="<%= data.subcategorys._id %>" id="cate_Id">            
+                          <button type="submit" class="btn btn-primary mr-2" onclick="subimt()">Updated</button>
+                          <button type="submit" class="btn btn-success mr-2" id="view">View</button>
+                          <button class="btn btn-dark" id="cancel">Cancel</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+  
+                </div>
+              </div>
+              <!-- content-wrapper ends -->
+              <!-- partial:partials/_footer.ejs -->
+              <%- include('../../partials/_footer.ejs') %>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <%- include('../../partials/_scriptjs.ejs') %>
+    <script>
+      $(document).ready(function () {
+        $("#view").click(function () {
+          window.location.href = "/backend/subcategory-table";
+        });
+      });
+      $(document).ready(function () {
+        $("#cancel").click(function () {
+          // Redirect to the specified page
+          window.location.href ="#" ;
+        });
+      });
+    </script>
+    <script>
+      function subimt(){
+        let form=document.getElementById('my-form');
+        form.addEventListener('submit',async function(event){
+            event.preventDefault();
+            let formData=new FormData(event.target);
+            let formObj=Object.fromEntries(formData);
+            let subId=document.getElementById("cate_Id").value;
+            try{
+                const response=await fetch(`/api/user/updated-subcategory/${subId}`,{
+                  method:"PUT",
+                  headers:{
+                    'Content-type': 'application/json',
+                  },
+                  body:JSON.stringify(formObj)
+                });
+                const result=await response.json();
+                responseMessage(result);
+            }catch(error){
+                return 
+            }
+        });
+          function responseMessage(result){
+            const showmessae=document.getElementById("responseMessage");
+            if(result.status==='success'){
+               showmessae.innerHTML=result.message;
+               showmessae.style.color='green';
+            }else if(result.status==='failed'){
+              showmessae.innerHTML=result.message;
+              showmessae.style.color='green';
+            }else if(result.status==='errors'){
+              validation(result)
+            }
+          }
+          function validation(result){
+            const subvalidation=document.getElementById('subvalidation');
+            const catvalidation=document.getElementById('catvalidation'); 
+            if(result.errors.category){
+              console.log(result.errors.category)
+              catvalidation.innerHTML=result.errors.category.msg;
+              catvalidation.style.color = 'red';
+            } 
+             if(result.errors.subcategory){
+              subvalidation.innerHTML=result.errors.subcategory.msg;
+              subvalidation.style.color = 'red';
+            }
+          }
+        }
+    </script>
+
+ 
+  </body>
+</html>

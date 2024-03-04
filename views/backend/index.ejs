@@ -1,0 +1,385 @@
+<% console.log() %>
+
+<!DOCTYPE html>
+<html lang="en">
+ <!-- partial:partials/_head.ejs -->
+ <%- include('./partials/_head.ejs') %>
+ <style>
+  #popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#popup-content {
+    color: black;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+ </style>
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.ejs -->
+      <%- include('./partials/_sidebar.ejs') %>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_navbar.html -->
+        <%- include('./partials/_navbar.ejs') %>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">1200034</h3>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success ">
+                          <span class="mdi mdi-cart icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Potential growth</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">1700034</h3>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+11%</p>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success">
+                          <span class="mdi mdi-cart icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Revenue current</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">128834</h3>
+                          <p class="text-danger ml-2 mb-0 font-weight-medium">-2.4%</p>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-danger">
+                          <span class="mdi mdi-cart icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Daily Income</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-9">
+                        <div class="d-flex align-items-center align-self-start">
+                          <h3 class="mb-0">319953</h3>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                        </div>
+                      </div>
+                      <div class="col-3">
+                        <div class="icon icon-box-success ">
+                          <span class="mdi mdi-cart icon-item"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <h6 class="text-muted font-weight-normal">Expense current</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+               <!--* Pop message showing -->
+            <div id="popup" style="background-color: rgba(230, 231, 239, 0.904); ">
+              <div id="popup-content">
+                  <!-- User details will be displayed here -->
+              </div>
+          </div>
+
+
+            <div class="row ">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Order Status</h4>
+                    <!-- search bar -->
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="text-secondary">
+                        Show
+                        <div class="mx-2 d-inline-block">
+                          <input type="text" class="form-control form-control-sm" value="8" size="3" aria-label="Invoices count">
+                        </div>
+                        entries
+                      </div>
+                      <div class="ms-auto text-secondary">
+                        Search:
+                        <div class="ms-2 d-inline-block">
+                          <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                           
+                            <th>No.</th>
+                            <th> Payment Id </th>
+                            <th> Order Id</th>
+                            <th> User Name </th>
+                            <th> Product Name </th>
+                            <th> Payment Status </th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                            <th>View</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                         
+                         
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                   <!-- pagination -->
+                   <div class="card-footer d-flex align-items-center justify-content-between">
+                    <p class="m-0 text-secondary" id="pagination-info">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
+                    <ul class="pagination m-0 ms-auto " id="pagination">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row"> 
+              <div class="col-md-6 col-xl-4 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Portfolio Slide</h4>
+                    <div class="owl-carousel owl-theme full-width owl-carousel-dash portfolio-carousel" id="owl-carousel-basic">
+                      <div class="item">
+                        <img src="assets/images/dashboard/Rectangle.jpg" alt="">
+                      </div>
+                      <div class="item">
+                        <img src="assets/images/dashboard/Img_5.jpg" alt="">
+                      </div>
+                      <div class="item">
+                        <img src="assets/images/dashboard/img_6.jpg" alt="">
+                      </div>
+                    </div>
+                    <div class="d-flex py-4">
+                      <div class="preview-list w-100">
+                        <div class="preview-item p-0">
+                          <div class="preview-thumbnail">
+                            <img src="assets/images/faces/face12.jpg" class="rounded-circle" alt="">
+                          </div>
+                          <div class="preview-item-content d-flex flex-grow">
+                            <div class="flex-grow">
+                              <div class="d-flex d-md-block d-xl-flex justify-content-between">
+                                <h6 class="preview-subject">CeeCee Bass</h6>
+                                <p class="text-muted text-small">4 Hours Ago</p>
+                              </div>
+                              <p class="text-muted">Well, it seems to be working now.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="text-muted">Well, it seems to be working now. </p>
+                    <div class="progress progress-md portfolio-progress">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>    
+            </div>
+           
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.ejs -->
+          <%- include('./partials/_footer.ejs') %>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <%- include('./partials/_scriptjs.ejs') %>
+
+    <script>
+      window.onload = function () {
+        fetchDataAndBindTable();
+      };    
+      let tableBody = document.querySelector('.table tbody');
+      let paginationInfo = $("#pagination-info");
+      let pagination = $("#pagination");
+      let currentPage = 1;
+      let pageSize = 3;   
+      
+      async function fetchDataAndBindTable() {
+          let currentPage = 1;
+          const pageSize = 3;    
+        try {
+          const response = await fetch(`/api/user/orderDetails?page=${currentPage}&limit=${pageSize}`); 
+          const { result, totalEntries, pageCount } = await response.json();
+          tableBody.innerHTML = '';
+          if (result && result.length > 0) {
+            result.forEach((user, index) => {
+              const row = tableBody.insertRow();
+              row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${user.transition.transactionId}</td>
+                <td>${user.transition.orderId}</td>
+                <td>${user.users[0].name}</td>
+                <td>${user.transition.productname}</td>
+                <td><label class="badge badge-warning">${user.transition.status}</label></td>
+                <td><a href="/api/user/updated-subcategory/${user.transition._id}"><label class="badge badge-outline-success">Edit</label></a></td>
+                <td>
+                  <label class="badge badge-outline-danger" onclick="deletesubCategory('${user.transition._id}')">Delete</label>
+                </td>
+                <td><a href="#" class="view-link" onclick="showPopup('${user.transition.transactionId}', '${user.transition.orderId}', '${user.users[0].name}', '${user.transition.productname}', '${user.transition.status}','${user.transition.phone}','${user.transition.email}','${user.transition.address}','${user.transition.city}','${user.transition.zipCode}','${user.transition.amount}')"><label class="badge badge-outline-warning">View</label></a></td>
+              `;
+            });
+              viewPagination(currentPage, pageCount);
+              const startEntry = (currentPage - 1) * pageSize + 1;
+              const endEntry = startEntry + result.length - 1;
+              paginationInfo.text(`Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`);
+           
+          } else {
+            tableBody.innerHTML = '<tr><td colspan="10">No data available</td></tr>';
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          tableBody.innerHTML = '<tr><td colspan="10">Error fetching data</td></tr>';
+        }
+      }
+
+      function viewPagination(currentPage, totalPages) {
+        pagination.empty()  
+        const prevPage = currentPage - 1;
+        const prevLink = `<li class="page-item ${prevPage < 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="goToviewPage(${prevPage})" tabindex="-1" aria-disabled="${prevPage < 1}">
+                              prev
+                            </a>
+                          </li>`;
+        pagination.append(prevLink);
+    
+        for (let i = 1; i <= totalPages; i++) {
+         
+          const pageLink = `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                              <a class="page-link" href="#" onclick="goToviewPage(${i})">${i}</a>
+                            </li>`;
+          pagination.append(pageLink);
+        }
+    
+        const nextPage = currentPage + 1;
+        const nextLink = `<li class="page-item ${nextPage > totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="goToviewPage(${nextPage})">
+                              next
+                            </a>
+                          </li>`;
+        pagination.append(nextLink);
+      }
+
+      function goToviewPage(pageNumber) {
+      const tableBody = $(document.querySelector('.table tbody'));
+        currentPage = pageNumber;   
+        fetch(`/api/user/orderDetails?page=${currentPage}&limit=${pageSize}`, {
+          method: 'GET',
+        })
+          .then(response => response.json())
+          .then(({ result, totalEntries, pageCount }) => {
+            tableBody.empty();
+            const startIndex = (currentPage - 1) * pageSize;
+            result.forEach((user, index) => {
+              const row = tableBody[0].insertRow();
+              row.innerHTML = `
+              <td>${startIndex + index + 1}</td>
+              <td>${user.transition.transactionId}</td>
+              <td>${user.transition.orderId}</td>
+              <td>${user.users[0].name}</td>
+              <td>${user.transition.productname}</td>
+              <td><label class="badge badge-warning">${user.transition.status}</label></td>
+              <td><a href="/api/user/updated-subcategory/${user.transition._id}"><label class="badge badge-outline-success">Edit</label></a></td>
+              <td>
+                <label class="badge badge-outline-danger" onclick="deletesubCategory('${user.transition._id}')">Delete</label>
+             
+              </td>
+              <td><a href="#" class="view-link" onclick="showPopup('${user.transition.transactionId}', '${user.transition.orderId}', '${user.users[0].name}', '${user.transition.productname}', '${user.transition.status}','${user.transition.phone}','${user.transition.email}','${user.transition.address}','${user.transition.city}','${user.transition.zipCode}','${user.transition.amount}')"><label class="badge badge-outline-warning">View</label></a></td>
+              `;
+            });      
+            viewPagination(currentPage, pageCount);      
+            const startEntry = (currentPage - 1) * pageSize + 1;
+            const endEntry = startEntry + result.length - 1;
+            paginationInfo.text(`Showing ${startEntry} to ${endEntry} of ${totalEntries} entries`);
+          })
+          .catch(error => {
+            console.error('Error fetching search results:', error);
+          });
+      } 
+
+      function showPopup(...userData) {
+        const user= userData;
+        console.log(user);
+        const popupContent = document.getElementById('popup-content');
+        popupContent.innerHTML = `
+            <p><strong>Transaction ID:</strong> ${user[0]}</p>
+            <p><strong>Order ID:</strong> ${user[1]}</p>
+            <p><strong>User Name:</strong> ${user[2]}</p>
+            <p><strong>Product Name:</strong> ${user[3]}</p>
+            <p><strong>Status:</strong> ${user[4]}</p>    
+            <p><strong>Phone:</strong> ${user[5]}</p>
+            <p><strong>Email:</strong> ${user[6]}</p>
+            <p><strong>Address:</strong> ${user[7]}</p>  
+            <p><strong>City:</strong> ${user[8]}</p> 
+            <p><strong>ZipCode:</strong> ${user[9]}</p> 
+            <p><strong>Amount:</strong> ${user[10]}</p>     
+        `;      
+        const popup = document.getElementById('popup');
+        popup.style.display = 'block';
+        const closeButton = document.createElement('span');
+        closeButton.innerHTML = '&times;';
+        closeButton.classList.add('close-button');
+        closeButton.onclick = function() {
+            popup.style.display = 'none';
+        };
+        popupContent.appendChild(closeButton);
+    }
+    
+
+    </script>
+  </body>
+</html>

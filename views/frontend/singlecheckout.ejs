@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+
+<%- include('include/head.ejs') %>
+
+<body>
+
+  <!-- Start Header Area -->
+  <%- include('include/header.ejs') %>
+  <!-- End Header Area -->
+
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>Checkout</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="single-product.html">Checkout</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+    <!--================Checkout Area =================-->
+    <section class="checkout_area section_gap">
+        <div class="container">   
+            <div class="cupon_area">
+                <div class="check_title">
+                    <h2>Have a coupon? <a href="#">Click here to enter your code</a></h2>
+                </div>
+                <input type="text" placeholder="Enter coupon code">
+                <a class="tp_btn" href="#">Apply Coupon</a>
+            </div>
+            <div class="billing_details">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h3>Billing Details</h3>
+                        <!-- Show the message -->
+					<div class="alert" id="responseMessage"></div>
+                        <form class="row contact_form" action="#" method="post" novalidate="novalidate">
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="first" name="name" placeholder="First Name">
+                                <span class="placeholder"></span>
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="last" name="name" placeholder="Last name">
+                                <span class="placeholder"></span>
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="number" name="number" placeholder="Number">
+                                <span class="placeholder"></span>
+                            </div>
+                            <div class="col-md-6 form-group p_star">
+                                <input type="text" class="form-control" id="email" name="compemailany" placeholder="Email Address">
+                                <span class="placeholder" ></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <select class="country_select">
+                                    <option value="india">India</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="add2" name="add2" placeholder="Address line">
+                                <span class="placeholder" ></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <input type="text" class="form-control" id="city" name="city" placeholder="Town/City">
+                                <span class="placeholder" ></span>
+                            </div>
+                            <div class="col-md-12 form-group p_star">
+                                <select class="country_select">
+                                    <option value="1">Kolkata</option>
+                                    <option value="2">Puruliya</option>
+                                    <option value="4">Durgapur</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="Postcode/ZIP">
+                            </div>
+                       
+                           
+                        </form>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="order_box">
+                            <h2>Your Order</h2>
+                            <ul class="list">
+                                <li><a href="#">Product <span>Total</span></a></li>
+                                <li><a href="#"><%= data.product.product %><span class="middle">x <%= data.quantity %></span> <span class="last">$<%= data.product.curr_price * data.quantity %></span></a></li>
+                                
+                            </ul>
+                            <ul class="list list_2">
+                                <li><a href="#">Subtotal <span>$<%= data.product.curr_price * data.quantity %></span></a></li>
+                                <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
+                                <li><a href="#">Total <span id="subtotal">$<%= 50 + (data.product.curr_price * data.quantity) %></span></a></li>
+                            </ul>
+                           
+                            <div class="payment_item active">
+                                <div class="radion_btn" >
+                                    <input type="radio" id="f-option6" name="selector" required>
+                                    <label for="f-option6">Paypal </label>
+                                    <img src="#" alt="">
+                                    <div class="check"></div>
+                                </div>
+                                <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                    account.</p>
+                            </div>
+                            <div class="creat_account">
+                                <input type="checkbox" id="f-option4" name="selector" aria-required="true">
+                                <label for="f-option4">I’ve read and accept the </label>
+                                <a href="#">terms & conditions*</a>
+                            </div>
+                            <a class="primary-btn" href="#" id="paypal">Proceed to Paypal</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+
+    <%- include('include/footer.ejs') %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('paypal').addEventListener('click', async function(event) {
+            event.preventDefault();
+            let loggedIn = '<%= loggedIn %>';
+            if (loggedIn === "false") {
+                window.location.href = "/login"; 
+                return;
+            }     
+            let firstName = document.getElementById('first').value;
+            let lastName = document.getElementById('last').value;
+            let phoneNumber = document.getElementById('number').value;
+            let emailAddress = document.getElementById('email').value;
+            let addressLine = document.getElementById('add2').value;
+            let city = document.getElementById('city').value;
+            let zipCode = document.getElementById('zip').value;
+            let productName = '<%= data.product.product %>';
+            let productId = '<%= data.product._id %>';
+            let subtotal = document.getElementById('subtotal').innerText;
+            const amount = subtotal.replace("$", "");
+            if (!firstName || !lastName || !phoneNumber || !emailAddress || !addressLine || !city || !zipCode || !amount) {
+                const responseMessageElement = document.getElementById('responseMessage');
+                responseMessageElement.innerHTML = "Please fill in all the fields.";
+                responseMessageElement.classList.add('alert-danger');
+                return;
+            }
+            var radioChecked = document.getElementById('f-option6').checked;
+            var checkboxChecked = document.getElementById('f-option4').checked;
+            if(!radioChecked || !checkboxChecked){
+                const responseMessageElement = document.getElementById('responseMessage');
+                responseMessageElement.innerHTML = "Please select the payment method and accept the terms & conditions.";
+                responseMessageElement.classList.add('alert-danger');
+                return;
+            }
+            try {
+                const formdata = {
+                    firstName,
+                    lastName,
+                    phone: phoneNumber,
+                    email: emailAddress,
+                    address: addressLine,
+                    city,
+                    zipCode,
+                    productname: productName,
+                    productId,
+                    amount
+                };    
+                const response = await fetch('/api/payment', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formdata),
+                });    
+                if (!response.ok) {
+                    throw new Error('Failed to create order');
+                }else{
+                    this.disabled = true; 
+                    this.textContent = 'Placing Order...';
+                }               
+                const result = await response.json();
+                if (result.success) {
+                   let amountss=result.amount;
+                   let option = {
+                        key: result.key_id,
+                        entity: "payment",
+                        amount: result.amount*100,   // amounts*100
+                        currency: "INR",
+                        status: "success",
+                        name:result.product_name,
+                        image: "https://dummyimage.com/600x400/000/fff",
+                        order_id: result.order_id, 
+                        handler: function (result) {
+                            const paymentId = result.razorpay_payment_id;
+                            fetch('/api/payment', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ paymentId: paymentId })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update transaction');
+                                }
+                                alert("Payment Succeeded");
+                            })
+                            .catch(error => {
+                                console.error('Error updating transaction:', error);
+                                alert("Payment Succeeded but failed to update transaction");
+                            });
+                        },
+
+                        prefill: {
+							"contact":""+result.contact+"",
+							"name": ""+result.name+"",
+							"email": ""+result.email+""
+						},
+                        "theme": {
+							"color": "#2300a3"
+						}
+                    };
+                    
+                    var razorpayObject = new Razorpay(option);
+                    razorpayObject.on('payment.failed', async function (response) {
+                       // console.log(response);
+                       // status: "failed",
+                        alert("Payment Failed");
+                    });
+                    
+                    razorpayObject.open();
+                } else {
+                    throw new Error('Failed to create order');
+                }
+            } catch (error) {
+                console.error('Error creating order:', error);
+                const responseMessageElement = document.getElementById('responseMessage');
+                responseMessageElement.innerHTML = "Failed to create order. Please try again later.";
+                responseMessageElement.classList.add('alert-danger');
+            }
+        });
+    </script>
+    
+    
+</body>
+
+</html>

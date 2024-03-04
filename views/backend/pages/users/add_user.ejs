@@ -1,0 +1,202 @@
+<% console.log(data); %>
+<!DOCTYPE html>
+<html lang="en">
+<!-- partial:partials/_head.ejs -->
+<%- include('../../partials/_head.ejs') %>
+
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.ejs -->
+      <%- include('../../partials/_sidebar.ejs') %>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+          <!-- partial:partials/_navbar.ejs -->
+          <%- include('../../partials/_navbar.ejs') %>
+            <!-- partial -->
+            <div class="main-panel">
+              <div class="content-wrapper">
+                <div class="page-header">
+                  <h3 class="page-title"> Form elements </h3>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Form elements</li>
+                    </ol>
+                  </nav>
+                </div>
+                <div class="row">
+
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                        <!-- show the message -->
+                        <div id="responseMessage" style="margin-top: 15px;"></div>
+                        <h4 class="card-title">Deatails Add</h4>
+                        <p class="card-description"> Table</p>
+                        <form class="forms-sample" onsubmit="formSubmit(event)">
+                          <div class="form-group row">
+                            <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Role</label>
+                            <div class="col-sm-9">
+                              <select class="form-control" id="exampleInputUsername2" name="role">
+                                <option>Select One</option>
+                                <% data.roles.forEach(role=> { %>
+                                  <option value="<%= role._id %>" id="role">
+                                    <%= role.role_name %>
+                                  </option>
+                                  <% }); %>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="exampleInputConfirmPassword2" class="col-sm-3 col-form-label">Permission</label>
+                            <div class="col-sm-9">
+                              <div class="form-control" style="display: flex; gap:10px;">
+                                <% data.permissions.forEach(permission=> {%>
+                                  <label>
+                                    <input type="checkbox" name="permission[]" class="permission-checkbox"
+                                      value="<%= permission._id %>">
+                                    <%= permission.role_name.toUpperCase() %>
+                                  </label>
+                                  <% }); %>
+                                    <br><br>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="exampleInputEmail2" class="col-sm-3 col-form-label">UserName</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="exampleInputusername" placeholder="username">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                              <input type="email" class="form-control" id="exampleInputemail" placeholder="Email">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="exampleInputMobile" class="col-sm-3 col-form-label">Mobile</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="exampleInputMobile"
+                                placeholder="Mobile number">
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="exampleInp" class="col-sm-3 col-form-label">Password</label>
+                            <div class="col-sm-9">
+                              <input type="password" class="form-control" id="exampleInputPassword2"
+                                placeholder="Password">
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="exampleInput" class="col-sm-3 col-form-label">Confirm
+                              Password</label>
+                            <div class="col-sm-9">
+                              <input type="password" class="form-control" id="ConfirmPassword" placeholder="CPassword">
+                            </div>
+                          </div>
+
+                          <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                          <button type="submt" id="view"  class="btn btn-success mr-2">View</button>
+                          <button class="btn btn-dark">Cancel</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <!-- content-wrapper ends -->
+              <!-- partial:partials/_footer.ejs -->
+              <%- include('../../partials/_footer.ejs') %>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <%- include('../../partials/_scriptjs.ejs') %>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+      $(document).ready(function () {
+          $('#exampleInputMobile').on('input', function () {
+              var inputValue = $(this).val();
+              if (/^\d{10}$/.test(inputValue)) {
+                  $(this).removeClass('is-invalid').addClass('is-valid');
+              } else {
+                  $(this).removeClass('is-valid').addClass('is-invalid');
+              }
+          });
+      });
+  </script>
+
+      <script>
+        async function formSubmit(event) {
+          event.preventDefault();
+          const role = document.getElementById('role').value;
+          const checkboxes = document.querySelectorAll('.permission-checkbox');
+          const selectedPermissions = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+          const username = document.getElementById('exampleInputusername').value;
+          const email = document.getElementById('exampleInputemail').value;
+          const mobile = document.getElementById('exampleInputMobile').value;
+          const password = document.getElementById('exampleInputPassword2').value;
+          const cpassword = document.getElementById('ConfirmPassword').value;
+          try {
+            const response = await fetch('/api/user/create-user', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                role: role,
+                permission: selectedPermissions,
+                name: username,
+                email: email,
+                mobile: mobile,
+                password: password,
+                cpassword: cpassword,
+              }),
+
+            });
+            const result = await response.json();
+            displayResponseMessage(result)
+          } catch (error) {
+            console.error("Error:", error.message);
+          }
+        }
+        function displayResponseMessage(result) {
+          const responseMessageElement = document.getElementById('responseMessage');
+          if (result.status === 'success') {
+            responseMessageElement.innerHTML = result.message;
+            responseMessageElement.style.color = 'green';
+          } else if (result.status === 'pandding') {
+            responseMessageElement.innerHTML = result.message;
+            responseMessageElement.style.color = 'green';
+          } else if (result.status === "failed") {
+            responseMessageElement.innerHTML = result.message;
+            responseMessageElement.style.color = 'red';
+          }
+        }
+
+      </script>
+      <script>
+        $(document).ready(function () {
+          $("#view").click(function () {
+            // Redirect to the specified page
+            window.location.href = "/backend/user-table";
+          });
+        });
+      </script>
+
+  </body>
+
+</html>

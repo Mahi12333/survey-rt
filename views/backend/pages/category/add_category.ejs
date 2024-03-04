@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- partial:partials/_head.ejs -->
+<%- include('../../partials/_head.ejs') %>
+
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.ejs -->
+      <%- include('../../partials/_sidebar.ejs') %>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+          <!-- partial:partials/_navbar.ejs -->
+          <%- include('../../partials/_navbar.ejs') %>
+            <!-- partial -->
+            <div class="main-panel">
+              <div class="content-wrapper">
+                <div class="page-header">
+                  <h3 class="page-title"> Form elements </h3>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Form elements</li>
+                    </ol>
+                  </nav>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                         <!-- show the message -->
+                         <div id="responseMessage" style="margin-top: 15px;"></div>
+                        <h4 class="card-title">Deatails Add</h4>
+                        <p class="card-description"> Table</p>
+                        <form class="forms-sample" id="myform">
+                          <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">Category</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" name="category" placeholder="category">
+                                <span class="text-danger" id="validation"> </span>
+                            </div>
+                          </div>         
+                          <input type="hidden" name="verify" value="true">              
+                          <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                          <button type="submit" class="btn btn-success mr-2">View</button>
+                          <button class="btn btn-dark">Cancel</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <!-- content-wrapper ends -->
+              <!-- partial:partials/_footer.ejs -->
+              <%- include('../../partials/_footer.ejs') %>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <%- include('../../partials/_scriptjs.ejs') %>
+
+    <script>
+      let form =document.getElementById("myform");
+       form.addEventListener('submit', async function(event){
+        event.preventDefault();
+        let formData=new FormData(event.target);
+        let formObj=Object.fromEntries(formData);
+        try{
+           const response=await fetch("/api/user/add_category",{
+            method:"POST",
+            headers:
+            {
+              Accept: 'application/json',
+              'Content-type': 'application/json',
+            },
+            body:JSON.stringify(formObj),
+           });
+          
+           const result = await response.json();
+           displayResponseMessage(result)
+        }catch(error){
+          console.error("Error:", error.message);
+        }
+       })
+
+       function displayResponseMessage(result) {
+        const responseMessageElement = document.getElementById('responseMessage');
+        if (result.status === 'success') {
+          responseMessageElement.innerHTML = result.message;
+          responseMessageElement.style.color = 'green';
+        } else if (result.status === 'pandding') {
+          responseMessageElement.innerHTML = result.message;
+          responseMessageElement.style.color = 'yellow';
+        } else if (result.status === "failed") {
+          responseMessageElement.innerHTML = result.message;
+          responseMessageElement.style.color = 'red';
+        }else if(result.status=== "errors"){
+          validation(result);
+        }
+      }
+
+      function validation(result){
+        const validationmessage=document.getElementById('validation');
+        validationmessage.innerHTML=result.errors.category.msg;
+        validationmessage.style.color = 'red';
+      }
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,377 @@
+<% console.log() %>
+<!DOCTYPE html>
+<html lang="en">
+<!-- partial:partials/_head.ejs -->
+<%- include('../../partials/_head.ejs') %>
+
+  <style>
+    .image-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .selected-image {
+      margin: 5px;
+      text-align: center;
+    }
+
+    .selected-image img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-bottom: 5px;
+    }
+
+    .remove-pic {
+      cursor: pointer;
+      color: red;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+
+  <body>
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.ejs -->
+      <%- include('../../partials/_sidebar.ejs') %>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+          <!-- partial:partials/_navbar.ejs -->
+          <%- include('../../partials/_navbar.ejs') %>
+            <!-- partial -->
+            <div class="main-panel">
+              <div class="content-wrapper">
+                <div class="page-header">
+                  <h3 class="page-title"> Form elements </h3>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="#">Forms</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">Form elements</li>
+                    </ol>
+                  </nav>
+                </div>
+                <div class="row">
+
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                         <!-- show the message -->
+                         <div id="responseMessage" style="margin-top: 15px;"></div>
+                        <h4 class="card-title">Deatails Add</h4>
+                        <p class="card-description"> Table</p>
+                        <form class="forms-sample" id="my-form">
+                          <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">Category</label>
+                            <div class="col-sm-9">
+                              <select class="form-control" name="category" id="category">
+                                <option value="">Select One</option>
+                                <% data.allcategory.forEach(category => {%>
+                                    <option value="<%= category._id %>" <% if(category._id.toString() === data.allproduct.category) { %> selected <% } %> >
+                                        <%= category.category %>
+                                    </option>
+                                <% }); %>
+                            </select>                            
+                              <span class="text-danger" id="catvalidation"> </span>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">SubCategory</label>
+                            <div class="col-sm-9">
+                              <select class="form-control" name="subcategory" id="subcategory">
+                                <option value="">Select One</option>
+                                <% data.subcategory.forEach(subcategory => { %> 
+                                    <option value="<%= subcategory._id %>" <% if(subcategory._id.toString() === data.allproduct.subcategory) { %> selected <% } %> >
+                                        <%= subcategory.subcategory %>
+                                    </option>
+                                <% }); %>    
+                            </select>
+                              <span class="text-danger" id="subvalidation"> </span>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="exampleInputMobile" class="col-sm-3 col-form-label">Product Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="exampleInputMobile" placeholder="product" autocomplete="off"
+                                name="product" value="<%= data.allproduct.product %>">
+                                <span class="text-danger" id="produvalidation"> </span>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label for="exampleInputImages" class="col-sm-3 col-form-label">Images</label>
+                            <div class="col-sm-9">
+                                <div class="choose-imagefile-wrap">
+                                    <div class="image-container" id="selectedImages">
+                                        <% data.allproduct.images.forEach(image => { %>
+                                        <div class="selected-image">
+                                            <img src="/backend/photo/<%= image %>" alt="Selected Image">
+                                            <p><%= image.substring(image.lastIndexOf('/') + 1) %></p>
+                                            <span class="remove-pic" onclick="removeImage(this)" >Remove</span>
+                                        </div>
+                                        <% }); %>
+                                    </div>
+                                    <input type="file" id="primaryInput" onchange="handleFileSelection()" multiple>
+                                    <input type="hidden" id="hiddenInput" value="0">
+                                </div>
+                                <span class="text-danger" id="imgvalidation"> </span>
+                            </div>
+                        </div>
+
+                             
+                        <div class="form-group row">
+                          <label for="exampleInputMobile" class="col-sm-3 col-form-label">Product Size:</label>
+                          <div class="col-sm-8">
+                              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <% ["x", "xl", "xll", "m", "s"].forEach(size => { %>
+                                  <label><%= size.toUpperCase() %>:
+                                      <input type="checkbox" value="<%= size%>" name="checkbox[]" <% if (data.allproduct.size[0].includes(size.toString())) { %> checked <% } %>>
+                                  </label>
+                              <% }); %>
+                              </div>
+                              <span class="text-danger" id="checkboxvalidation"> </span>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label for="exampleInputMobile" class="col-sm-3 col-form-label">Original Price:</label>
+                          <div class="col-sm-9">
+                              <input type="number" class="form-control" id="originalPrice" placeholder="Orginal Price" name="org_price" value="<%= data.allproduct.org_price %>">
+                              <span class="text-danger" id="org_pricevalidation"> </span>
+                          </div>
+                      </div>
+
+                      <div class="form-group row">
+                          <label for="exampleInputMobile" class="col-sm-3 col-form-label">Discount (%):</label>
+                          <div class="col-sm-9">
+                              <input type="number" class="form-control" id="discount" placeholder="Discount" name="discount" value="<%= data.allproduct.discount %>">
+                              <span class="text-danger" id="discountvalidation"> </span>
+                          </div>
+                      </div>
+
+                      <div class="form-group row">
+                          <label for="exampleInputMobile" class="col-sm-3 col-form-label">Final Price:</label>
+                          <div class="col-sm-9">
+                              <input type="number" class="form-control" id="finalPrice" placeholder="Final Price" name="curr_price" value="<%= data.allproduct.curr_price %>">
+                          </div>
+                       </div>
+                          <input type="hidden" id="pro_id" value="<%=data.allproduct._id%>">
+                          <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                          <button type="submit" class="btn btn-success mr-2">View</button>
+                          <button class="btn btn-dark">Cancel</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <!-- content-wrapper ends -->
+              <!-- partial:partials/_footer.ejs -->
+              <%- include('../../partials/_footer.ejs') %>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <%- include('../../partials/_scriptjs.ejs') %>
+    <script>
+      const originalPriceInput = document.getElementById('originalPrice');
+      const discountInput = document.getElementById('discount');
+      const finalPriceInput = document.getElementById('finalPrice');
+  
+      originalPriceInput.addEventListener('input', calculateFinalPrice);
+      discountInput.addEventListener('input', calculateFinalPrice);
+  
+      function calculateFinalPrice() {
+          const originalPrice = originalPriceInput.value;
+          const discount = discountInput.value;
+          const discountedPrice = originalPrice - (originalPrice * (discount / 100));
+          finalPriceInput.value = discountedPrice.toFixed(0); 
+      }
+  </script> 
+
+  <script>
+    function removeImage(input) {
+      const imageContainer = input.parentElement;      
+     imageContainer.remove();
+ }
+
+    function handleFileSelection() {
+      const selectedImagesContainer = document.getElementById('selectedImages');
+      const primaryInput = document.getElementById('primaryInput');
+      const hiddenInput = document.getElementById('hiddenInput');
+
+      const files = primaryInput.files;
+      const maxAllowedFiles = 5;
+      let currentFileCount = selectedImagesContainer.children.length;
+      for (let i = 0; i < files.length && currentFileCount < maxAllowedFiles; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const imageContainer = document.createElement('div');
+          imageContainer.classList.add('selected-image');
+
+          const image = document.createElement('img');
+          image.src = e.target.result;
+
+          const imageName = document.createElement('p');
+          imageName.textContent = file.name;
+
+          const removeButton = document.createElement('span');
+          removeButton.classList.add('remove-pic');
+          removeButton.textContent = 'Remove';
+          removeButton.onclick = function () {
+            imageContainer.remove();
+            currentFileCount--;
+            hiddenInput.value = currentFileCount;
+            primaryInput.classList.remove('hidden');
+          };
+
+          imageContainer.appendChild(image);
+          imageContainer.appendChild(imageName);
+          imageContainer.appendChild(removeButton);
+
+          selectedImagesContainer.appendChild(imageContainer);
+          currentFileCount++;
+        };
+
+        reader.readAsDataURL(file);
+      }
+
+      if (currentFileCount >= maxAllowedFiles) {
+        primaryInput.classList.add('hidden');
+      } else {
+        primaryInput.classList.remove('hidden');
+      }
+
+      hiddenInput.value = currentFileCount;
+    }
+  </script> 
+
+        <script>
+          $("#category").on("change", async function (event) {
+            event.preventDefault();
+            let categoryValue = $("#category").val();
+            const response = await fetch(`/api/user/product-subcategory/${categoryValue}`);
+            const result = await response.json();
+            const subcategories = result.subcategory.length;
+            const subcategoryDropdown = $("select[name='subcategory']");
+            subcategoryDropdown.empty();
+            if (subcategories > 0) {
+              subcategoryDropdown.append('<option value="">Select One</option>');
+              result.subcategory.forEach(subcategory => {
+                subcategoryDropdown.append(`<option value="${subcategory._id}">${subcategory.subcategory}</option>`);
+              });
+            } else {
+              subcategoryDropdown.append('<option value="">No subcategories available</option>');
+            }
+          });
+        </script>
+        <script>
+          subimt();
+          function subimt(){
+          let form = document.getElementById("my-form");
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            let formData = new FormData();
+            const pro_id=document.getElementById("pro_id").value;
+             const categoryValue = document.getElementById("category");
+             const subcategoryValue = document.getElementById("subcategory");
+             const productName = document.getElementById("exampleInputMobile");
+             const originalPrice = document.getElementById("originalPrice");
+             const discount = document.getElementById("discount");
+             const curr_price = document.getElementById("finalPrice");
+             formData.append('category', categoryValue.value);
+             formData.append('subcategory', subcategoryValue.value);
+             formData.append('product', productName.value);
+             formData.append('org_price',originalPrice.value);
+             formData.append('discount', discount.value);
+             formData.append('curr_price',curr_price.value);
+  
+             const imageDivsd = document.querySelectorAll('.selected-image');
+             const fetchPromises = [];
+             imageDivsd.forEach((imageDiv, index) => {
+            const imageName = imageDiv.querySelector('p').textContent;
+            const imageFileInput = imageDiv.querySelector('img');
+            const imageData = imageFileInput.src; // Get the image source
+            if (imageData.startsWith('http://localhost:4000/backend/photo/')) {
+               const fileName = imageData.substring(imageData.lastIndexOf('/') + 1);
+          
+               fetchPromises.push(fetch(imageData)
+              .then(response => response.blob())
+              .then(blob => {
+                const file = new File([blob], fileName);
+                //fetchPromises.push(file)
+                //formData.append('images', file);
+                return file;
+              })
+              .catch(error => {
+                console.error('Error fetching the image:', error);
+              })
+            );
+
+            } else {
+              console.log("jjj")
+                const imageDataParts = imageData.split(","); // Split the data URL
+                const mimeType = imageDataParts[0]; // Get the MIME type
+                const fileContent = imageDataParts[1]; // Get the image content
+                const byteCharacters = atob(fileContent); // Decode base64 data
+                const byteNumbers = new Array(byteCharacters.length); // Create an array to hold the byte values
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i); // Convert each character to a byte value
+                }
+                const byteArray = new Uint8Array(byteNumbers); // Create a Uint8Array from the byte values
+                const file = new File([byteArray], imageName, {
+                    type: mimeType
+                }); // Create a File object
+                formData.append('images', file);
+             }
+            });
+             
+            const check=[];
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach((checkbox, index) => {
+              check.push(checkbox.value);
+            });
+            formData.append('checkbox', check);
+
+            Promise.all(fetchPromises)
+            .then(files => {
+                files.forEach(file => {
+                    if (file) {
+                        formData.append('images', file);
+                    }
+                });
+                console.log(...formData); 
+            })
+           console.log(...formData);
+            try {
+              const response = await fetch(`/api/user/updated-product/${pro_id}`, {
+                method: 'PUT', 
+                body:formData,
+              });  
+
+                const result = await response.json();
+                console.log(result);
+               
+            } catch (error) {
+              console.error('Error sending data to the server', error);
+            }
+          });   
+          
+        }
+       
+        </script>
+  </body>
+
+</html>
+

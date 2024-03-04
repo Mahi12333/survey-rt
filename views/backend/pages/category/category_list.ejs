@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- partial:partials/_head.ejs -->
+  <%- include('../../partials/_head.ejs') %>
+  <body onload="getData()">
+    <div class="container-scroller">
+       <!-- partial:partials/_sidebar.ejs -->
+     <%- include('../../partials/_sidebar.ejs') %>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+       <!-- partial:partials/_navbar.ejs -->
+       <%- include('../../partials/_navbar.ejs') %>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title"> Basic Tables </h3>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="#">Tables</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Basic tables</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                     <!-- Display response message here -->
+                   <div id="responseMessage" style="margin-top: 15px;"></div>
+                    <h4 class="card-title">Category Table</h4>
+                  <a href="/backend/add-category"> <button class="card-description badge badge-outline-warning" style="background-color: #000; margin-bottom:1rem"> Add Category 
+                    </button></a> 
+                    <div class="table-responsive" >
+                      <table class="table" id="userTable">
+                        <thead>
+                          <tr>
+                            <th>Category No.</th>
+                            <th>Category Name</th>
+                            <th>Status</th>
+                            <th>Updated</th>
+                            <th>Delete</th>
+                            <th>View</th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody">                                                 
+                           
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+           <!-- partial:partials/_footer.ejs -->
+           <%- include('../../partials/_footer.ejs') %>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <%- include('../../partials/_scriptjs.ejs') %>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script>
+      async function getData() {
+        const records = await fetch("/api/user/category-view");
+        const result = await records.json();
+    
+        let tab = '';
+        result.category.forEach(function (category, index) {
+          tab += `<tr>
+            <td>${index + 1}</td>
+            <td>${category.category}</td>
+            <td><label class="badge badge-warning">${category.is_verified ? 'Active' : 'Not Active'}</label></td>
+            <td><a href="/backend/updated-category/${category._id}"><label class="badge badge-outline-success">Edit</label></a></td>
+            <td><label class="badge badge-outline-danger" onclick="deleteCategory('${category._id}')">Delete</label></td>
+            <td><label class="badge badge-outline-warning">View</label></td>
+          </tr>`;
+        });
+        document.getElementById("tbody").innerHTML = tab;
+    
+        $('#userTable').DataTable({
+          "pageLength": 5, 
+          "lengthChange": false,
+          "bPaginate": true,
+          "bLengthChange": false,
+          "columnDefs": [
+          { "targets": 0, "orderable": true },
+          { "targets": 1, "orderable": true },
+          { "targets": 2, "orderable": false },
+          { "targets": 3, "orderable": false },
+          { "targets": 4, "orderable": false },
+          { "targets": 5, "orderable": false }
+         ],
+        
+        });
+      }
+    </script>
+    <script>
+      
+      async function deleteCategory(cateId) {
+        try {
+          const response = await fetch(`/api/user/delete-category/${cateId}`, {
+            method: 'DELETE',
+          })
+          const result =await response.json();
+          resopnsemessage(result);        
+        } catch (error) {
+         return res.status(400).json({ error: 'Bad Request: Missing userId parameter' });
+        }
+      }
+      function resopnsemessage(result){
+        const responseMessageElement =
+          document.getElementById("responseMessage");
+        if (result.status === "success") {
+          responseMessageElement.innerHTML = result.message;
+          responseMessageElement.style.color = "green";
+        } else if (result.status === "failed") {
+          responseMessageElement.innerHTML = result.message;
+          responseMessageElement.style.color = "red";
+        }    
+     }
+    </script>    
+  </body>
+</html>
