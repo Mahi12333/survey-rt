@@ -1,84 +1,93 @@
 import express from "express";
 import bodyparser from "body-parser";
 import { fileURLToPath } from "url";
-import {dirname, resolve } from "path";
+import path from "path";
 import cors from "cors";
-import cookieParser from "cookie-parser";
-import dotenv from 'dotenv';
-import session from "express-session";
+import dotenv from "dotenv";
+import backendWebRoute from "./routes/webroutes.js";   // for rendering EJS pages
+import backendApi from "./routes/route.js";            // for API endpoints
+import { connectDB} from "../config/database/connection.js";
+import middleware from "i18next-http-middleware";
+import i18n from "../config/i18n.js";
+import { errorHandler, notFound } from "./utils/ErrorHandler.js";
+import { syncDB } from "./utils/SeedData.js";
+import {sequelize} from '../config/database/connection.js';
 
 
-dotenv.config({
-    path:'./.env',
-})
+dotenv.config({ path: "./.env" });
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const app = express();  
-app.use(cors());  //Enable CORS for all routes
-// log requests
-//app.use(morgan('tiny'));
+const __dirname = path.dirname(__filename);
 
-// parse request to body-parser
+const app = express();
+app.use(cors());
+
+// parse request body
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-app.use(cookieParser());
+app.use(middleware.handle(i18n));
 
-app.use(session({
-  secret:process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
+connectDB();
+
+const allowedOrigins = 
+    [
+        'http://localhost:8080',
+        'http://localhost:3000',
+        'http://localhost:4000'
+    ]
+
+// syncDB();
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true
 }));
 
-
-
-
 // set view engine
+// app.set('views', './views');
+app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "ejs");
-//app.set("views",templatePath);
-app.use('/', express.static(resolve(__dirname, "../public/")));
-// fortend multer 
-app.use('/frontend/photo', express.static(resolve(__dirname, "../public/user/photo/")));
-
-//! load routers for frontend
-import HomeRouter from "./routes/frontend/router.js";
-app.use('/', HomeRouter);
-
-//!api for frontend
-import apiRouter from "./routes/frontend/api.js";
-app.use('/api', apiRouter); 
+// app.set("views", path.join(__dirname, "views"));
+console.log("__dirname:", __dirname);
+console.log("Views directory:", path.join(__dirname, "views"));
 
 
-//! load assets For frontend 
-app.use('/backend/assets', express.static(resolve(__dirname, "../public_backend/assets/")));
+// static folders
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/.well-known", express.static(path.join(__dirname, ".well-known")));
+app.use("/assets", express.static(path.join(__dirname, "../public_backend/assets/")));
+app.use("/photo", express.static(path.join(__dirname, "../public_backend/assets/photo/")));
 
-// For Multter
-app.use('/backend/photo', express.static(resolve(__dirname, "../public_backend/assets/photo/")));
-// app.use('/backend/temp', express.static('../temp/photo/'));
-//app.use('/temp', express.static(resolve(__filename, "../temp/photo/")));
-// const tempFolderPath = path.resolve(__dirname, '../temp/photo/');
-// app.use('/backend/temp', express.static(tempFolderPath));
-// console.log(tempFolderPath);
+// Optional: silence requests you don’t care about
+app.get("*.map", (_req, res) => res.status(204).end());          // ignore source maps
+app.get("/.well-known/*", (_req, res) => res.status(204).end()); // ignore unknown .well-known
 
-//! load routers for backend
-import BackendRoute from "./routes/backend/routes.js";
-app.use('/backend/', BackendRoute);
+// Web pages
+app.use("/", backendWebRoute);
 
-//! load Api for backend
-import backendApi from "./routes/backend/api.js";
-app.use('/api/user',backendApi);
+// Api routes
+app.use("/v1/api/user", backendApi);
+
+// 404 + error handler must be last
+app.use(notFound);
+app.use(errorHandler);
+
+sequelize.sync()
+// await sequelize.sync({ force: true }); // ⚠️ Drops all tables and recreates
+
+app.listen(process.env.PORT || 4000 , () => {
+        console.log(`⚙️ Server is running at port : ${process.env.PORT}`);
+        console.log(`Server is running at http://localhost:${process.env.PORT}`);
+    })
 
 
-app.get("/logout", (req, res) => {
-    res.cookie("token", "", { maxAge: "1" })
-    res.redirect("/backend/login")
-  })
 
-  app.get("/forlogout", (req, res) => {
-    res.cookie("frontoken", "", { maxAge: "1" });
-    res.clearCookie("cartItems");
-    res.redirect("/")
-  })
-
-//app is export from app.js
-export { app };

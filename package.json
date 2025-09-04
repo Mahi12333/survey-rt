@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "-r dotenv/config --experimental-json-modules server/server.js",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules server/server.js"
+    "start": "-r dotenv/config --experimental-json-modules server/app.js",
+    "dev": "nodemon -r dotenv/config --experimental-json-modules server/app.js"
   },
   "author": "Mahitosh",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "axios": "^1.6.5",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "cloudinary": "^1.41.3",
     "cluster": "^0.7.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -26,13 +27,19 @@
     "express": "^4.18.2",
     "express-session": "^1.18.0",
     "express-validator": "^7.0.1",
+    "i18next": "^25.4.2",
+    "i18next-fs-backend": "^2.6.0",
+    "i18next-http-middleware": "^3.8.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.0",
     "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.8",
+    "pg": "^8.16.3",
     "prettier": "^3.1.1",
     "razorpay": "^2.9.2",
+    "sequelize": "^6.37.7",
     "uuid": "^9.0.1"
   }
 }

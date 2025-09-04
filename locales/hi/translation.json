@@ -1,0 +1,7 @@
+{
+  "login_success": "लॉगिन सफल हुआ",
+  "invalid_credentials": "ईमेल या पासवर्ड मान्य नहीं है",
+  "email_not_exist": "ईमेल मौजूद नहीं है",
+  "all_fields_required": "सभी फ़ील्ड आवश्यक हैं",
+  "login_failed": "लॉगिन करने में असमर्थ"
+}

@@ -4,3 +4,7 @@
 /profileController.txt
 /Reader.md
 /Reder_1.md
+
+node_modules
+
+.env

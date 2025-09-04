@@ -1,0 +1,7 @@
+{
+  "login_success": "Login successful",
+  "invalid_credentials": "Email or password is not valid",
+  "email_not_exist": "Email does not exist",
+  "all_fields_required": "All fields are required",
+  "login_failed": "Unable to login"
+}

@@ -4,7 +4,7 @@ dotenv.config({
 })
 import nodemailer from 'nodemailer';
 
-let transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
   secure: false, // true for 465, false for other ports
@@ -14,4 +14,20 @@ let transporter = nodemailer.createTransport({
   },
 })
 
-export default transporter;
+
+export const sendMailOTP = async ( to, subject, html ) => {
+  //console.log("send otp", to, subject, html)
+  try {
+    const info = await transporter.sendMail({
+      from: `"SURVEY-RT" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    // console.log("Message sent: %s", info.messageId);
+    return { success: true };
+  } catch (error) {
+    console.error("Email send failed:", error);
+    return { success: false, error };
+  }
+};

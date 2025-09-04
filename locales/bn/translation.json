@@ -1,0 +1,7 @@
+{
+  "login_success": "লগইন সফল হয়েছে",
+  "invalid_credentials": "ইমেইল বা পাসওয়ার্ড সঠিক নয়",
+  "email_not_exist": "ইমেইল বিদ্যমান নেই",
+  "all_fields_required": "সমস্ত ক্ষেত্র প্রয়োজনীয়",
+  "login_failed": "লগইন করতে ব্যর্থ হয়েছে"
+}
