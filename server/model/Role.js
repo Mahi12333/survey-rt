@@ -1,42 +1,16 @@
-import { DataTypes } from "sequelize";
-import {sequelize} from '../../config/database/connection.js';
-import { ROLE_NAMES } from "../utils/constanse.js"; 
+import mongoose from "mongoose";
+import { ROLE_NAMES } from "../utils/constanse.js";
 
-const Role = sequelize.define(
-  "Role",
+const RoleSchema = new mongoose.Schema(
   {
-    id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
       unique: true,
-      validate: {
-        isIn: {
-          args: [Object.values(ROLE_NAMES)],
-          msg: "Value is not supported",
-        },
-      },
+      enum: Object.values(ROLE_NAMES), // ✅ only allowed roles
+      required: true,
     },
   },
-  {
-    tableName: "tbl_roles", // explicitly sets the table name
-    timestamps: true, 
-    indexes: [
-      {
-        unique: true,
-        fields: ["name"],
-      },
-    ],
-  }
+  { timestamps: true, collection: "tbl_roles" }
 );
 
-
-// Role.sync();
-// Role.sync({ force: true });
-// Role.sync({ alter: true }); 
-
-export default Role
+export default mongoose.model("Role", RoleSchema);

@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import generatedToken from "../utils/generateToken.js";
 import asyncHandler from "../utils/AsyncHandler.js";

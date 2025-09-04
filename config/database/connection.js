@@ -1,42 +1,20 @@
-import { Sequelize } from 'sequelize';
-import pg from 'pg';
-import dotenv from 'dotenv';
+import mongoose from "mongoose";
 
-dotenv.config();
-
-const isProduction = process.env.NODE_ENV === "production";
-
-
-const sequelize = new Sequelize(
-  process.env.DB_DATABASE,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
-    protocol: 'postgres',
-    dialectModule: pg,
-    logging: false,
-    dialectOptions: isProduction
-      ? {
-          ssl: {
-            require: true,
-            rejectUnauthorized: false,
-          },
-        }
-      : {},
-  }
-);
-
+console.log(`\n MongoDB connected !! DB HOST: ${process.env.MONGODB_URI}`);
 const connectDB = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log("Connection has been established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
+    try {
+        const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}`);
+        console.log(`\n MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
+
+        // Return the MongoDB client (connectionInstance) so it can be used in controllers
+        return  connectionInstance.connection;
+    } catch (error) {
+        console.log("MONGODB connection error", error);
+        //
+        process.exit(1);
+    }
 };
 
 
-export { connectDB, sequelize };
+
+export default connectDB;

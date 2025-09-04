@@ -1,44 +1,14 @@
+import mongoose from "mongoose";
 
-import { DataTypes } from 'sequelize';
-import {sequelize} from '../../config/database/connection.js';
+const BannerSchema = new mongoose.Schema(
+  {
+    name: { type: String, default: null },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    image_path: { type: String, default: null },
+    category_survey_id: { type: mongoose.Schema.Types.ObjectId, ref: "CategorySurvey", default: null },
+    specific_survey_id: { type: mongoose.Schema.Types.ObjectId, ref: "SpecificSurvey", default: null },
+  },
+  { timestamps: true, collection: "tbl_banners" }
+);
 
-const Banner = sequelize.define('Banner', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    user_id:{
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
-    image_path: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null
-    },
-    category_survey_id : {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    },
-    specific_survey_id : {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    },
-
-}, {
-    tableName: 'tbl_banners',
-    timestamps: true, // Set to true if you want Sequelize to automatically manage createdAt and updatedAt columns
-});
-
-// Banner.sync();
-// Banner.sync({ force: true });
-// Banner.sync({ alter: true }); 
-
-export default Banner;
+export default mongoose.model("Banner", BannerSchema);

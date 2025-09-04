@@ -6,13 +6,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import backendWebRoute from "./routes/webroutes.js";   // for rendering EJS pages
 import backendApi from "./routes/route.js";            // for API endpoints
-import { connectDB} from "../config/database/connection.js";
 import middleware from "i18next-http-middleware";
 import i18n from "../config/i18n.js";
 import { errorHandler, notFound } from "./utils/ErrorHandler.js";
-import { syncDB } from "./utils/SeedData.js";
-import {sequelize} from '../config/database/connection.js';
-
+import connectDB from "../config/database/connection.js";
+import { connectAndSeed } from "./utils/SeedData.js";
 
 dotenv.config({ path: "./.env" });
 
@@ -36,7 +34,7 @@ const allowedOrigins =
         'http://localhost:4000'
     ]
 
-// syncDB();
+// connectAndSeed();
 
 app.use(
   cors({
@@ -81,7 +79,7 @@ app.use("/v1/api/user", backendApi);
 app.use(notFound);
 app.use(errorHandler);
 
-sequelize.sync()
+// sequelize.sync()
 // await sequelize.sync({ force: true }); // ⚠️ Drops all tables and recreates
 
 app.listen(process.env.PORT || 4000 , () => {

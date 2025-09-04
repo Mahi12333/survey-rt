@@ -1,36 +1,16 @@
-import { DataTypes } from 'sequelize';
-import {sequelize} from '../../config/database/connection.js';
+import mongoose from "mongoose";
 
-const Bookmark = sequelize.define('Bookmark', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    user_id:{
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
-    specifi_survey_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    },
+const BookmarkSchema = new mongoose.Schema(
+  {
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    specifi_survey_id: { type: mongoose.Schema.Types.ObjectId, ref: "SpecificSurvey", default: null },
     type: {
-    type: DataTypes.ENUM('bookmark', 'like'),
-    allowNull: true,
-    defaultValue: 'like'
-  }
-},
-    {
-        tableName: 'tbl_bookmark',
-        timestamps: true,
-    }
+      type: String,
+      enum: ["bookmark", "like"],
+      default: "like",
+    },
+  },
+  { timestamps: true, collection: "tbl_bookmark" }
 );
 
-
-// Bookmark.sync();
-// Bookmark.sync({ force: true });
-// Bookmark.sync({ alter: true }); 
-
-export default Bookmark
+export default mongoose.model("Bookmark", BookmarkSchema);

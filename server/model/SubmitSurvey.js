@@ -1,53 +1,20 @@
+import mongoose from "mongoose";
 
-import { DataTypes } from 'sequelize';
-import {sequelize} from '../../config/database/connection.js';
-
-const SubmitSurvey = sequelize.define('SubmitSurvey', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    specifi_survey_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    category_survey_id : {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    },
-    total_marks : {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null
-    },
-     score: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    answer: {
-      type: DataTypes.JSON, // Store Answer full JSON object/array
-      allowNull: true,
-      defaultValue: [] 
-    },
+const SubmitSurveySchema = new mongoose.Schema(
+  {
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    specifi_survey_id: { type: mongoose.Schema.Types.ObjectId, ref: "SpecificSurvey", required: true },
+    category_survey_id: { type: mongoose.Schema.Types.ObjectId, ref: "CategorySurvey", default: null },
+    total_marks: { type: Number, default: null },
+    score: { type: Number, required: true },
+    answer: { type: Array, default: [] },
     status: {
-      type: DataTypes.ENUM("Pending", "Complate"),
-      defaultValue: "Pending",
-    
-    }
+      type: String,
+      enum: ["Pending", "Complate"],
+      default: "Pending",
+    },
+  },
+  { timestamps: true, collection: "tbl_submit_survey" }
+);
 
-}, {
-    tableName: 'tbl_submit_survey',
-    timestamps: true, // Set to true if you want Sequelize to automatically manage createdAt and updatedAt columns
-});
-
-// SubmitSurvey.sync();
-// SubmitSurvey.sync({ force: true });
-// SubmitSurvey.sync({ alter: true }); 
-
-export default SubmitSurvey;
+export default mongoose.model("SubmitSurvey", SubmitSurveySchema);

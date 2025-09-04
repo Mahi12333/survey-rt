@@ -5,7 +5,6 @@ dotenv.config();
 
 
 const generatedToken = async ({ userId, userAgent, ipAddress }) => {
-  //const token = jwt.sign({ userId, sessionId }, JWT_SECRET, { expiresIn: '1h' });
   const accessToken = jwt.sign(
     { userId },
     process.env.JWT_SECRET,

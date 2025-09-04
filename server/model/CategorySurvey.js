@@ -1,34 +1,12 @@
+import mongoose from "mongoose";
 
-import { DataTypes } from 'sequelize';
-import {sequelize} from '../../config/database/connection.js';
+const CategorySurveySchema = new mongoose.Schema(
+  {
+    name: { type: String, default: null },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    logo_path: { type: String, default: null },
+  },
+  { timestamps: true, collection: "tbl_category_survey" }
+);
 
-const CategorySurvey = sequelize.define('CategorySurvey', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    user_id:{
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
-    logo_path: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null
-    },
-
-}, {
-    tableName: 'tbl_category_survey',
-    timestamps: true, // Set to true if you want Sequelize to automatically manage createdAt and updatedAt columns
-});
-
-// CategorySurvey.sync();
-// CategorySurvey.sync({ force: true });
-// CategorySurvey.sync({ alter: true }); 
-
-export default CategorySurvey;
+export default mongoose.model("CategorySurvey", CategorySurveySchema);
