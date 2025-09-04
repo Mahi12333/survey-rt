@@ -20,7 +20,7 @@ export const userLogin = asyncHandler(async (req, res) => {
     throw new AppError("Invalid email format.", 404);
   }
 
-  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: 2 } });
+  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813' } });
   if (!user) {
     throw new AppError("Invalid email or password.", 404);
   }
@@ -70,6 +70,10 @@ export const RegisterUser = asyncHandler(async (req, res) => {
     uniqueUserName = `${baseUserName}${count}`;
     count++;
   }
+  const role = await Role.findById('68b976e2c95061ae0f036813');
+  if (!role) {
+    throw new AppError("Invalid role_id", 400);
+  }
   const userinfo = await User.create({
       password: hashedPassword,
       login_from: "local",
@@ -78,7 +82,7 @@ export const RegisterUser = asyncHandler(async (req, res) => {
       fcm_token: fcm_token,
       user_name: uniqueUserName, 
       email: email,
-      role_id: 2
+      role_id: role._id
     });
   
   await handleOtpProcess(userinfo, res);
@@ -87,7 +91,7 @@ export const RegisterUser = asyncHandler(async (req, res) => {
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
-        const ExistingUser = await User.findOne({where: { id: req.user.id }});
+        const ExistingUser = await User.findOne({where: { _id: req.user.id }});
         ExistingUser.fcm_token = null;
         await ExistingUser.save();
         return successResponse(res, "Logout successful.!", );
@@ -97,7 +101,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 export const fcmTokenMobile = asyncHandler(async (req, res) => {
     const { fcm_token } = req.query;
     if(!fcm_token) throw new AppError("Fcm token is required!", 404);
-    await User.update({ fcm_token: fcm_token }, { where: { id: req.user.id } });
+    await User.update({ fcm_token: fcm_token }, { where: { _id: req.user.id } });
     return successResponse(res, "Fcm Token save properly!",)
 });
 
@@ -149,7 +153,7 @@ export const otpVerify = asyncHandler(async (req, res) => {
       profile_complete: "COMPLETE",
     });
     const { accessToken } = await generatedToken({
-    userId: user.id
+    userId: user._id
   });
     const userSafe = { ...user.get({ plain: true }) };
     delete userSafe.password;
@@ -215,7 +219,7 @@ export const AdminLogin = asyncHandler(async (req, res) => {
     throw new AppError("Invalid email format.", 404);
   }
 
-  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: 1 } });
+  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813' } });
   if (!user) {
     throw new AppError("Invalid email or password.", 404);
   }
