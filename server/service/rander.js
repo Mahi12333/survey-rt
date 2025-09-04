@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Create axios instance with a base URL
 const api = axios.create({
-    baseURL: "http://localhost:4000/api/user/",
+    baseURL: "https://survey-rt.onrender.com/api/user/",
   });
   
   // Extract 'get' method from the axios instance
