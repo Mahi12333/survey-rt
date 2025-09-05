@@ -34,7 +34,7 @@ export const userLogin = asyncHandler(async (req, res) => {
   const { accessToken } = await generatedToken({
     userId: user.id
   });
-  const userSafe = { ...user.get({ plain: true }) };
+  const userSafe = user.toObject();
   delete userSafe.password;
    
   const response = {
