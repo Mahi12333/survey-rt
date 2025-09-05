@@ -13,12 +13,12 @@ export const generateOtp = () => {
 };
 
 const handleOtpProcess = async (user, res) => {
-  //console.log(user)
-  let otpUser = await Otpverify.findOne({ where: { email: user.email } });
+  // Find OTP by email
+  let otpUser = await Otpverify.findOne({ email: user.email });
 
   // Remove expired OTP
   if (otpUser && new Date() > otpUser.expires_at) {
-    await Otpverify.destroy({ where: { email: user.email } });
+    await Otpverify.deleteOne({ email: user.email });  // ✅ Mongoose delete
     otpUser = null;
   }
 
@@ -43,33 +43,29 @@ const handleOtpProcess = async (user, res) => {
     const emailSent = await sendOtpEmail(otp, email);
 
     if (emailSent) {
-      // return successResponse(res, 'OTP sent to email successfully. Please check your inbox.', {});
-      return true
+      return true;
     } else {
-      throw new AppError('Failed to send OTP.', 404);
+      throw new AppError("Failed to send OTP.", 404);
     }
   } else {
     // Generate new OTP and store
     const otp = generateOtp();
-    const expiresAt = new Date(Date.now() + 2 * 60000); // expires in 1 minute
+    const expiresAt = new Date(Date.now() + 2 * 60000); // expires in 2 mins
     const emailSent = await sendOtpEmail(otp, user.email);
 
     if (emailSent) {
-      const otpSend = await Otpverify.create({
+      await Otpverify.create({
         email: user.email,
         otp,
         expires_at: expiresAt,
       });
-
-      const responseData = otpSend.get({ plain: true });
-      delete responseData.otp;
-      return true
-      //return successResponse(res, 'OTP sent to email successfully. Please check your inbox.', {});
+      return true;
     } else {
-      throw new AppError('Failed to send OTP.', 404);
+      throw new AppError("Failed to send OTP.", 404);
     }
   }
 };
+
 
 
 export {

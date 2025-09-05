@@ -20,7 +20,7 @@ export const userLogin = asyncHandler(async (req, res) => {
     throw new AppError("Invalid email format.", 404);
   }
 
-  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813' } });
+  const user = await User.findOne({  email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813'  });
   if (!user) {
     throw new AppError("Invalid email or password.", 404);
   }
@@ -57,7 +57,7 @@ export const RegisterUser = asyncHandler(async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  let user = await User.findOne({ where: { email: emailLower } });
+  let user = await User.findOne({  email: emailLower  });
   if (user) {
     throw new AppError("Sorry! your account already exists, Plz do login!", 400);
   }
@@ -66,7 +66,7 @@ export const RegisterUser = asyncHandler(async (req, res) => {
   let count = 1;
 
   // Loop to ensure uniqueness
-  while (await User.findOne({ where: { user_name: uniqueUserName } })) {
+  while (await User.findOne({ user_name: uniqueUserName })) {
     uniqueUserName = `${baseUserName}${count}`;
     count++;
   }
@@ -84,7 +84,6 @@ export const RegisterUser = asyncHandler(async (req, res) => {
       email: email,
       role_id: role._id
     });
-  
   await handleOtpProcess(userinfo, res);
 
   return successResponse(res, "OTP sent to email successfully. Please check your inbox.", );
@@ -128,35 +127,33 @@ export const otpVerify = asyncHandler(async (req, res) => {
   if (!otp || !email) {
     throw new AppError("Email and Otp are required!.", 404);
   }
-  const user = await User.findOne({ where: { email: email } });
+  const user = await User.findOne({ email: email  });
   if (!user) {
     throw new AppError("User Not Register..", 404);
   }
   const OtpExisting = await Otpverify.findOne({
-    where: {
       email: email,
       type: type
-    },
   });
   if (!OtpExisting) {
     throw new AppError("User Not Register..", 404);
   }
   const expires_at = OtpExisting.expires_at;
   if (new Date() > expires_at) {
-    await Otpverify.destroy({ where: { email: OtpExisting.email, type: type } });
+    await Otpverify.deleteOne({ email: OtpExisting.email, type: type  });
     throw new AppError("OTP has expired. Please request a new one.", 404);
   }
   if (otp === OtpExisting.otp) {
-    await Otpverify.destroy({ where: { email: OtpExisting.email, type: type } });
+    await Otpverify.deleteOne({  email: OtpExisting.email, type: type  });
     if(type === 'registration'){
-    await user.update({
+    await user.updateOne({
       profile_complete: "COMPLETE",
     });
     const { accessToken } = await generatedToken({
     userId: user._id
   });
-    const userSafe = { ...user.get({ plain: true }) };
-    delete userSafe.password;
+    const userSafe = user.toObject();
+      delete userSafe.password;
 
     const response = {
       userSafe,
@@ -203,7 +200,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 export const resendOtp = asyncHandler( async ( req, res ) =>{
     const { email } = req.body;
-     const user = await User.findOne({ where: { email: email } });
+    const user = await User.findOne({ email: email });
     await handleOtpProcess(user, res);
     return successResponse(res, "OTP sent to email successfully. Please check your inbox.", );
 });
@@ -219,7 +216,7 @@ export const AdminLogin = asyncHandler(async (req, res) => {
     throw new AppError("Invalid email format.", 404);
   }
 
-  const user = await User.findOne({ where: { email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813' } });
+  const user = await User.findOne({ where:  email, profile_complete: 'COMPLETE', role_id: '68b976e2c95061ae0f036813'  });
   if (!user) {
     throw new AppError("Invalid email or password.", 404);
   }
