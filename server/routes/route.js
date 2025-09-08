@@ -3,7 +3,7 @@ import multer from "multer";
 import cloudinary from "../../config/cloudinary.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { createCategorySurvey, deleteCategorySurvey, updateCategorySurvey, createBanner, updateBanner, deleteBanner } from "../controllers/SurveyController.js";
-import { otpVerify, RegisterUser, userLogin, resendOtp, AdminLogin } from "../controllers/UserController.js";
+import { otpVerify, RegisterUser, userLogin, resendOtp, AdminLogin, passwordResetRequest } from "../controllers/UserController.js";
 
 
 function getCurrentTimestamp() {
@@ -86,6 +86,8 @@ router.post("/user-login", userLogin);
 router.post("/admin-login", AdminLogin);
 router.post("/otp-verify", otpVerify);
 router.post("/resend-otp", resendOtp);
-
+router.post("/request-forget-password", passwordResetRequest);
+// router.post("/request-forget-password", passwordResetRequest);
+// router.post("/request-forget-password", passwordResetRequest);
 
 export default router;

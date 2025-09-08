@@ -110,7 +110,7 @@ export const passwordResetRequest = asyncHandler(async (req, res) => {
     throw new AppError("Email is required!.", 404);
   }
 
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ email } );
   if (!user) {
     throw new AppError("User not registered.", 404);
   }
